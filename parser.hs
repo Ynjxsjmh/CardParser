@@ -128,6 +128,7 @@ guessTime event
   | 5 <= hour && hour <= 10 = "早餐"
   | 11 <= hour && hour <= 14 = "中餐"
   | 15 <= hour && hour <= 20 = "晚餐"
+  | otherwise = "夜宵"
   where hour = read (getTimeList event !! 0) :: Int
 
 splitEvent :: String -> Char -> [String]
