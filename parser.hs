@@ -98,12 +98,28 @@ convert' (events:eventsList) = [combine events] ++ convert' eventsList
 -- events 是同一天内相同的事件
 combine :: [String] -> String
 combine [] = ""
-combine events = date ++ " * \"" ++ (getEvent . head' $ events) ++ "\"\n" ++ getDetail events
+combine events = date ++ " * " ++ getEventsName events ++ "\n" ++ getDetail events
   where timeList = splitEvent (getDate . head' $ events) '/'
         complete numberString
           | length numberString < 2 = "0" ++ numberString
           | otherwise = numberString
         date = timeList !! 0 ++ "-" ++ complete (timeList !! 1) ++ "-" ++ complete (timeList !! 2)
+
+remove_dups :: (Ord a, Eq a) => [a] -> [a]
+remove_dups xs = remove $ sort xs
+  where
+    remove []  = []
+    remove [x] = [x]
+    remove (x1:x2:xs)
+      | x1 == x2  = remove (x1:xs)
+      | otherwise = x1 : remove (x2:xs)
+
+flatten :: [String] -> String
+flatten [] = []
+flatten (event:events) = "\"" ++ event ++ "\" " ++ flatten events
+
+getEventsName :: [String] -> String
+getEventsName lineList = flatten . remove_dups $ (map getEvent lineList)
 
 getDetail :: [String] -> String
 getDetail [] = ""
