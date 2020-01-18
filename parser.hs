@@ -95,7 +95,6 @@ convert' :: [[String]] -> [String]
 convert' [] = []
 convert' (events:eventsList) = [combine events] ++ convert' eventsList
 
--- putStr . combine $ ["2020/1/1 16:27:50   基础园区食堂套餐    持卡人消费  -7  30.76", "2020/1/1 16:27:20   基础园区食堂套餐    持卡人消费  -3.8    37.76", "2020/1/1 11:28:18   前卫四餐厅/套餐 持卡人消费  -8.8    41.56"]
 -- events 是同一天内相同的事件
 combine :: [String] -> String
 combine [] = ""
@@ -111,8 +110,7 @@ getDetail [] = ""
 getDetail events
   | isInfixOf "浴池" (head' events) = "  Expenses:Housing:Bath +" ++ cost ++ " CNY\n" ++
     "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
-  | otherwise  = "#" ++ (guessTime . head' $ events) ++ "\n  Expenses:Food:School +" ++ cost ++ " CNY\n" ++
-    "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
+  | otherwise  = "#" ++ (guessTime . head' $ events) ++ "\n  Expenses:Food:School +" ++ cost ++ " CNY\n" ++ "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
   where cost = (show . getSumCost $ events)
 
 -- 很 rough 的一个判断函数
@@ -148,17 +146,22 @@ getSumCost (x:xs) = (read . getCost $ x :: Float) + getSumCost xs
 
 
 -- limitTime 以小时算
+-- 根据商户名称和交易时间分类
 groupByEventTime :: [String] -> Int -> [[String]]
 groupByEventTime lineList limitTime = groupBy (\fst' snd' -> let fstEvent = getEvent fst'
                                                                  sndEvent = getEvent snd'
                                                                  fstMain = takeWhile (/='/') fstEvent
                                                                  sndMain = takeWhile (/='/') sndEvent
 
+                                                                 equalString = [ x | x<-fstEvent, y<-sndEvent, x==y]
+                                                                 l1 = length equalString
+                                                                 l2 = length fstEvent
+
                                                                  fstTimeList = getTimeList fst'
                                                                  sndTimeList = getTimeList snd'
                                                                  fstS = convertT (fstTimeList !! 0) (fstTimeList !! 1) (fstTimeList !! 2)
                                                                  sndS = convertT (sndTimeList !! 0) (sndTimeList !! 1) (sndTimeList !! 2)
-                                                             in fstMain == sndMain && abs (fstS - sndS) < limitTime * 60 * 60) lineList
+                                                             in (fstMain == sndMain || 2*l1 > l2 ) && abs (fstS - sndS) < limitTime * 60 * 60) lineList
 
 
 -- limitTime 以小时算
