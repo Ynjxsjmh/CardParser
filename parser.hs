@@ -35,7 +35,7 @@ unlines' [] = []
 unlines' (x:xs) = x ++ unlines' xs
 
 mfilter :: [String] -> [String]
-mfilter lines = filterTransfer . filterNull $ lines
+mfilter lineList = filterTransfer . filterEvent . filterNull $ lineList
 
 getDir :: String -> String
 getDir str
@@ -66,6 +66,9 @@ filterTransfer lineList = filter (\line -> not (isInfixOf "补助流水" line ||
 filterNull :: [String] -> [String]
 filterNull [] = []
 filterNull lineList = filter (\line -> length line > 0) lineList
+
+filterEvent :: [String] -> [String]
+filterEvent lineList = filter (\line -> isInfixOf "/" (getDate line)) lineList
 
 -- 将文本按日期划分
 groupByDay :: [String] -> [[String]]
