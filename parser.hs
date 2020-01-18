@@ -3,8 +3,6 @@
 import System.Environment (getArgs)
 import System.IO
 import Data.List
-import Data.Time
-import Data.Time.Format
 
 {-# LANGUAGE ImplicitParams    #-}
 import GHC.Stack
