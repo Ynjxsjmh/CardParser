@@ -26,16 +26,6 @@ main = do
   let modified = convert . groupByDay . mfilter . lines $ text
     in hPutStrLn outh (unlines . unlines' $ modified)
 
-  putStrLn . show . lines $ text
-  putStrLn "--------------------"
-  putStrLn . show . mfilter . lines $ text
-  putStrLn "--------------------"
-  putStrLn . show . groupByDay . mfilter . lines $ text
-  putStrLn "--------------------"
-  putStrLn . show . convert . groupByDay . mfilter . lines $ text
-  putStrLn "--------------------"
-  putStr . unlines . unlines' . convert . groupByDay . mfilter . lines $ text
-
   hClose file
   hClose outh
 
