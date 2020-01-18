@@ -164,18 +164,6 @@ groupByEventTime lineList limitTime = groupBy (\fst' snd' -> let fstEvent = getE
                                                              in (fstMain == sndMain || 2*l1 > l2 ) && abs (fstS - sndS) < limitTime * 60 * 60) lineList
 
 
--- limitTime 以小时算
--- groupByTime :: [String] -> Int -> [[String]]
--- groupByTime lineList limitTime = groupBy (\fst' snd' -> let getTimeList line = wordsWhen (==':') ((wordsWhen (==' ') line) !! 1)
---                                                             fstTimeList = getTimeList fst'
---                                                             sndTimeList = getTimeList snd'
---                                                             fstS = convertT (fstTimeList !! 0) (fstTimeList !! 1) (fstTimeList !! 2)
---                                                             sndS = convertT (sndTimeList !! 0) (sndTimeList !! 1) (sndTimeList !! 2)
---                                                         in abs (sndS - fstS) < limitTime * 60 * 60
---                                          ) lineList
-
-
 -- 将时间转化为秒
 convertT :: String -> String -> String -> Int
 convertT h m s = (read h :: Int) * 60 * 60 + (read m :: Int) * 60 + (read s :: Int)
-
