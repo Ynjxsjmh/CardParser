@@ -1,3 +1,5 @@
+-- ghc parser.hs && .\parser.exe input.txt
+
 import System.Environment (getArgs)
 import System.IO
 import Data.List
