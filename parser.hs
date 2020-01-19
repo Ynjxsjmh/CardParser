@@ -3,6 +3,7 @@
 import System.Environment (getArgs)
 import System.IO
 import Data.List
+import Text.Printf
 
 {-# LANGUAGE ImplicitParams    #-}
 import GHC.Stack
@@ -125,7 +126,7 @@ getDetail events
   | otherwise  = "#" ++ (guessTime . head' $ events) ++
                  getDetailEvents events ++
                  "\n  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
-  where cost = (show . getSumCost $ events)
+  where cost = printf "%.2f" (getSumCost events) :: String
 
 getDetailEvents :: [String] -> String
 getDetailEvents [] = ""
