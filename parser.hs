@@ -14,6 +14,7 @@ head'       :: HasCallStack => [a] -> a
 head' (x:_) =  x
 head' []    =  error $ "head': empty list" ++ "\nCallStack: " ++ show callStack
 
+main :: IO()
 main = do
   args <- getArgs
   file <- openFile (head' args) ReadMode
