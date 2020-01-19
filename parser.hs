@@ -115,13 +115,21 @@ flatten (event:events) = "\"" ++ event ++ "\" " ++ flatten events
 getEventsName :: [String] -> String
 getEventsName lineList = flatten . remove_dups $ (map getEvent lineList)
 
+-- events 是同一天内相同的事件
 getDetail :: [String] -> String
 getDetail [] = ""
 getDetail events
   | isInfixOf "浴池" (head' events) = "  Expenses:Housing:Bath +" ++ cost ++ " CNY\n" ++
-    "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
-  | otherwise  = "#" ++ (guessTime . head' $ events) ++ "\n  Expenses:Food:School +" ++ cost ++ " CNY\n" ++ "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
+                                      "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
+  | otherwise  = "#" ++ (guessTime . head' $ events) ++
+                 getDetailEvents events ++
+                 "\n  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
   where cost = (show . getSumCost $ events)
+
+getDetailEvents :: [String] -> String
+getDetailEvents [] = ""
+getDetailEvents (event:events) = "\n  Expenses:Food:School +" ++ getCost event ++ " CNY" ++ getDetailEvents events
+
 
 -- 很 rough 的一个判断函数
 guessTime :: String -> String
