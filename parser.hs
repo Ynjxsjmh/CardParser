@@ -175,7 +175,7 @@ groupByEventTime lineList limitTime = groupBy (\fst' snd' -> let fstEvent = getE
 
                                                                  equalString = [ x | x<-fstEvent, y<-sndEvent, x==y]
                                                                  l1 = length equalString
-                                                                 l2 = length fstEvent
+                                                                 l2 = max (length fstEvent) (length sndEvent)
 
                                                                  fstTimeList = getTimeList fst'
                                                                  sndTimeList = getTimeList snd'
