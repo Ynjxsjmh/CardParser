@@ -174,20 +174,21 @@ getSumCost (x:xs) = (read . getCost $ x :: Float) + getSumCost xs
 --   2. 两笔交易商户名称位对位字符比较相同达到一定标准
 -- 交易时间判等规则：一小时之内
 groupByEventTime :: [String] -> Int -> [[String]]
-groupByEventTime lineList limitTime = groupBy (\fst' snd' -> let fstEvent = getEvent fst'
-                                                                 sndEvent = getEvent snd'
-                                                                 fstMain = takeWhile (/='/') fstEvent
-                                                                 sndMain = takeWhile (/='/') sndEvent
+groupByEventTime lineList limitTime = groupBy (\fst' snd' ->
+                                                 let fstEvent = getEvent fst'
+                                                     sndEvent = getEvent snd'
+                                                     fstMain = takeWhile (/='/') fstEvent
+                                                     sndMain = takeWhile (/='/') sndEvent
 
-                                                                 equalString = [ x | x<-fstEvent, y<-sndEvent, x==y]
-                                                                 l1 = length equalString
-                                                                 l2 = max (length fstEvent) (length sndEvent)
+                                                     equalString = [ x | x<-fstEvent, y<-sndEvent, x==y]
+                                                     l1 = length equalString
+                                                     l2 = max (length fstEvent) (length sndEvent)
 
-                                                                 fstTimeList = getTimeList fst'
-                                                                 sndTimeList = getTimeList snd'
-                                                                 fstS = convertT (fstTimeList !! 0) (fstTimeList !! 1) (fstTimeList !! 2)
-                                                                 sndS = convertT (sndTimeList !! 0) (sndTimeList !! 1) (sndTimeList !! 2)
-                                                             in (fstMain == sndMain || 2*l1 > l2 ) && abs (fstS - sndS) < limitTime * 60 * 60) lineList
+                                                     fstTimeList = getTimeList fst'
+                                                     sndTimeList = getTimeList snd'
+                                                     fstS = convertT (fstTimeList !! 0) (fstTimeList !! 1) (fstTimeList !! 2)
+                                                     sndS = convertT (sndTimeList !! 0) (sndTimeList !! 1) (sndTimeList !! 2)
+                                                 in (fstMain == sndMain || 2*l1 > l2 ) && abs (fstS - sndS) < limitTime * 60 * 60) lineList
 
 
 -- 将时间转化为秒
