@@ -65,7 +65,7 @@ wordsWhen p s =  case dropWhile p s of
 -- 去除有转账记录的行
 filterTransfer :: [String] -> [String]
 filterTransfer [] = []
-filterTransfer lineList = filter (\line -> not (isInfixOf "补助流水" line || isInfixOf "银行转账" line) ) lineList
+filterTransfer lineList = filter (\line -> not (isInfixOf "补助流水" line) ) lineList
 
 -- 去除空行
 filterNull :: [String] -> [String]
@@ -127,11 +127,15 @@ getEventsName lineList = flatten . remove_dups $ (map getEvent lineList)
 getDetail :: [String] -> String
 getDetail [] = ""
 getDetail events
-  | isInfixOf "浴池" (head' events) = "\n  Expenses:Health:Bath +" ++ cost ++ " CNY\n" ++
-                                      "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
+  | isInfixOf "浴池" event = "\n  Expenses:Health:Bath +" ++ cost ++ " CNY\n" ++
+                             "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
+  | isInfixOf "银行转账" event = "\n  Assets:Bank:CN:BOC -" ++ (getTransfer event) ++ " CNY\n" ++
+                                 "  Assets:CampusCard:JLU +" ++ (getTransfer event) ++ " CNY\n\n"
   | otherwise  = getDetailEvents events ++
                  "\n  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
-  where cost = printf "%.2f" (getSumCost events) :: String
+  where event = head' events
+        cost = printf "%.2f" (getSumCost events) :: String
+        getTransfer event = splitEvent event ' ' !! 3
 
 getDetailEvents :: [String] -> String
 getDetailEvents [] = ""
