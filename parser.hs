@@ -128,24 +128,20 @@ getDetail [] = ""
 getDetail events
   | isInfixOf "浴池" (head' events) = "  Expenses:Housing:Bath +" ++ cost ++ " CNY\n" ++
                                       "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
-  | otherwise  = "#" ++ (guessTime . head' $ events) ++
-                 getDetailEvents events ++
+  | otherwise  = getDetailEvents events ++
                  "\n  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
   where cost = printf "%.2f" (getSumCost events) :: String
 
 getDetailEvents :: [String] -> String
 getDetailEvents [] = ""
-getDetailEvents (event:events) = "\n  Expenses:Food:School +" ++ getCost event ++ " CNY" ++ getDetailEvents events
+getDetailEvents (event:events) = getExpensesType event ++ (getCost event) ++ " CNY" ++ getDetailEvents events
+  where getExpensesType event
+          |  5 <= hour && hour <= 10 = "\n  Expenses:Food:Breakfast +"
+          | 11 <= hour && hour <= 14 = "\n  Expenses:Food:Dinner +"
+          | 15 <= hour && hour <= 20 = "\n  Expenses:Food:Lunch +"
+          | otherwise = "夜宵"
+          where hour = read (getTimeList event !! 0) :: Int
 
-
--- 很 rough 的一个判断函数
-guessTime :: String -> String
-guessTime event
-  | 5 <= hour && hour <= 10 = "早餐"
-  | 11 <= hour && hour <= 14 = "中餐"
-  | 15 <= hour && hour <= 20 = "晚餐"
-  | otherwise = "夜宵"
-  where hour = read (getTimeList event !! 0) :: Int
 
 splitEvent :: String -> Char -> [String]
 splitEvent event deli = wordsWhen (== deli) event
