@@ -1,4 +1,5 @@
 -- ghc parser.hs && .\parser.exe input.txt
+-- input.txt 里不能有 tab
 
 import System.Environment (getArgs)
 import System.IO
