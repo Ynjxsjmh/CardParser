@@ -98,13 +98,13 @@ convert' (events:eventsList) = [combine events] ++ convert' eventsList
 -- 将这些 events 转换成 beancount 格式
 combine :: [String] -> String
 combine [] = ""
-combine events = date ++ " * " ++ "\"" ++ time ++ "\" " ++ getEventsName events ++ "\n" ++ getDetail events
+combine events = printf "%s * %s\n  datetime: %s %s%s" date (getEventsName events) date time (getDetail events)
   where timeList = splitEvent (getDate . head' $ events) '/'
         complete numberString
           | length numberString < 2 = "0" ++ numberString
           | otherwise = numberString
         date = timeList !! 0 ++ "-" ++ complete (timeList !! 1) ++ "-" ++ complete (timeList !! 2)
-        time = (getTimeList . head' $ events) !! 0 ++ ":" ++ (getTimeList . head' $ events) !! 1
+        time = (getTime . head' $ events)
 
 remove_dups :: (Ord a, Eq a) => [a] -> [a]
 remove_dups xs = remove $ sort xs
