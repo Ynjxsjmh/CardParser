@@ -126,7 +126,7 @@ getEventsName lineList = flatten . remove_dups $ (map getEvent lineList)
 getDetail :: [String] -> String
 getDetail [] = ""
 getDetail events
-  | isInfixOf "浴池" (head' events) = "  Expenses:Housing:Bath +" ++ cost ++ " CNY\n" ++
+  | isInfixOf "浴池" (head' events) = "\n  Expenses:Health:Bath +" ++ cost ++ " CNY\n" ++
                                       "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
   | otherwise  = getDetailEvents events ++
                  "\n  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
