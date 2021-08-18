@@ -131,6 +131,8 @@ getDetail [] = ""
 getDetail events
   | isInfixOf "浴池" event = "\n  Expenses:Health:Bath +" ++ cost ++ " CNY\n" ++
                              "  Assets:CampusCard:JLU -" ++ cost ++ " CNY\n\n"
+  | isInfixOf "网络使用费" event = "\n Expenses:Service:Internet +" ++ (getTransfer event) ++ " CNY\n" ++
+                                 "  Assets:CampusCard:JLU -" ++ (getTransfer event) ++ " CNY\n\n"
   | isInfixOf "银行转账" event = "\n  Assets:Bank:CN:BOC -" ++ (getTransfer event) ++ " CNY\n" ++
                                  "  Assets:CampusCard:JLU +" ++ (getTransfer event) ++ " CNY\n\n"
   | otherwise  = getDetailEvents events ++
