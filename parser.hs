@@ -36,6 +36,7 @@ unlines' :: [[String]] -> [String]
 unlines' [] = []
 unlines' (x:xs) = x ++ unlines' xs
 
+-- 去除不需要的行
 mfilter :: [String] -> [String]
 mfilter lineList = filterTransfer . filterEvent . filterNull $ lineList
 
@@ -65,10 +66,13 @@ filterTransfer :: [String] -> [String]
 filterTransfer [] = []
 filterTransfer lineList = filter (\line -> not (isInfixOf "补助流水" line || isInfixOf "银行转账" line) ) lineList
 
+-- 去除空行
 filterNull :: [String] -> [String]
 filterNull [] = []
 filterNull lineList = filter (\line -> length line > 0) lineList
 
+-- 去除那些第一个不是 date 形式的行
+-- 比如 “历史流水查询：开始时间”
 filterEvent :: [String] -> [String]
 filterEvent lineList = filter (\line -> isInfixOf "/" (getDate line)) lineList
 
@@ -91,6 +95,7 @@ convert' [] = []
 convert' (events:eventsList) = [combine events] ++ convert' eventsList
 
 -- events 是同一天内相同的事件
+-- 将这些 events 转换成 beancount 格式
 combine :: [String] -> String
 combine [] = ""
 combine events = date ++ " * " ++ "\"" ++ time ++ "\" " ++ getEventsName events ++ "\n" ++ getDetail events
@@ -168,6 +173,10 @@ getSumCost (x:xs) = (read . getCost $ x :: Float) + getSumCost xs
 
 -- limitTime 以小时算
 -- 根据商户名称和交易时间分类
+-- 商户名称判等规则：
+--   1. 两笔交易商户名称第一个 / 前面是一样的
+--   2. 两笔交易商户名称位对位字符比较相同达到一定标准
+-- 交易时间判等规则：一小时之内
 groupByEventTime :: [String] -> Int -> [[String]]
 groupByEventTime lineList limitTime = groupBy (\fst' snd' -> let fstEvent = getEvent fst'
                                                                  sndEvent = getEvent snd'
