@@ -67,7 +67,9 @@ wordsWhen p s =  case dropWhile p s of
 -- 去除有转账记录的行
 filterTransfer :: [String] -> [String]
 filterTransfer [] = []
-filterTransfer lineList = filter (\line -> not (isInfixOf "补助流水" line) ) lineList
+filterTransfer lineList = filter (\line -> not (isInfixOf "补助流水" line
+                                                || isInfixOf "解挂" line
+                                                || isInfixOf "挂失" line) ) lineList
 
 -- 去除空行
 filterNull :: [String] -> [String]
