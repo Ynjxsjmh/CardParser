@@ -22,7 +22,7 @@ main = do
   hSetEncoding file utf8
   text <- hGetContents file
 
-  outh <- openFile ((getDir . head' $ args) ++ "result.txt") WriteMode
+  outh <- openFile ((getDir . head' $ args) ++ "result.bean") WriteMode
   hSetEncoding outh utf8
 
   let modified = convert . groupByDay . mfilter . lines $ text
