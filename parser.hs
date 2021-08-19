@@ -140,11 +140,12 @@ getDetailEvents :: [String] -> String
 getDetailEvents [] = ""
 getDetailEvents (event:events) = getExpensesType event ++ (getCost event) ++ " CNY" ++ getDetailEvents events
   where getExpensesType event
-          |  5 <= hour && hour <= 10 = "\n  Expenses:Food:Breakfast +"
-          | 11 <= hour && hour <= 14 = "\n  Expenses:Food:Lunch +"
-          | 15 <= hour && hour <= 20 = "\n  Expenses:Food:Dinner +"
-          | otherwise = "夜宵"
+          | isFood &&  5 <= hour && hour <= 10 = "\n  Expenses:Food:Breakfast +"
+          | isFood && 11 <= hour && hour <= 14 = "\n  Expenses:Food:Lunch +"
+          | isFood && 15 <= hour && hour <= 20 = "\n  Expenses:Food:Dinner +"
+          | otherwise = "\n  Expenses:Misc +"
           where hour = read (getTimeList event !! 0) :: Int
+                isFood = (isInfixOf "食堂" event) || (isInfixOf "餐厅" event)
 
 
 splitEvent :: String -> Char -> [String]
