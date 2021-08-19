@@ -141,15 +141,22 @@ getDetailEvents :: [String] -> String
 getDetailEvents [] = ""
 getDetailEvents (event:events) = getExpensesType event ++ cost ++ " CNY" ++ getDetailEvents events
   where cost = printf "%.2f" (read . getCost $ event :: Float) :: String
-        getExpensesType event
-          | isFood &&  5 <= hour && hour <= 10 = "\n  Expenses:Food:Breakfast +"
-          | isFood && 11 <= hour && hour <= 14 = "\n  Expenses:Food:Lunch +"
-          | isFood && 15 <= hour && hour <= 20 = "\n  Expenses:Food:Dinner +"
-          | otherwise = "\n  Expenses:Misc +"
-          where hour = read (getTimeList event !! 0) :: Int
-                isFood = (isInfixOf "食堂" event) || (isInfixOf "餐厅" event)
-                         || (isInfixOf "新楼" event && isInfixOf "二楼" event)
+        getExpensesDetail event
+          | eventType == "Breakfast" = "\n  Expenses:Food:Breakfast +"
+          | eventType == "Lunch"     = "\n  Expenses:Food:Lunch +"
+          | eventType == "Dinner"    = "\n  Expenses:Food:Dinner +"
+          | otherwise                = "\n  Expenses:Misc +"
+          where eventType = guessEventType event
 
+guessEventType :: String -> String
+guessEventType event
+  | isFood &&  5 <= hour && hour <= 10 = "Breakfast"
+  | isFood && 11 <= hour && hour <= 14 = "Lunch"
+  | isFood && 15 <= hour && hour <= 20 = "Dinner"
+  | otherwise = "Misc"
+  where hour = read (getTimeList event !! 0) :: Int
+        isFood = (isInfixOf "食堂" event) || (isInfixOf "餐厅" event)
+                 || (isInfixOf "新楼" event && isInfixOf "二楼" event)
 
 splitEvent :: String -> Char -> [String]
 splitEvent event deli = wordsWhen (== deli) event
