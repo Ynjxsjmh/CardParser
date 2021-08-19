@@ -1,7 +1,7 @@
 -- ghc parser.hs && .\parser.exe input.txt
 -- input.txt 里不能有 tab
--- 商户名称里面可能有“套餐1”这种形式，但是此脚本不支持中间的空格，需要去掉。
--- 否则会报“Prelude.read: no parse”这个错误
+-- 商户名称里面可能有“套餐 1”，“基础园超市 31”,“负一层/负1A04”这种形式，但是此脚本不支持中间的空格，需要去掉。
+-- 否则会报“Prelude.read: no parse”这个错误，可以尝试通过二分查找处理输入文件定位哪里不符合
 
 import System.Environment (getArgs)
 import System.IO
@@ -163,6 +163,8 @@ getTimeList line = splitEvent (getTime line) ':'
 getEvent :: String -> String
 getEvent line = splitEvent line ' ' !! 2
 
+-- 去除掉前面的负号
+-- 因为正常的吃饭交易都是减钱
 getCost :: String -> String
 getCost line = tail (splitEvent line ' ' !! 4)
 
