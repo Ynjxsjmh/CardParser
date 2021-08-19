@@ -65,7 +65,8 @@ filterTransfer :: [String] -> [String]
 filterTransfer [] = []
 filterTransfer lineList = filter (\line -> not (isInfixOf "补助流水" line
                                                 || isInfixOf "解挂" line
-                                                || isInfixOf "挂失" line) ) lineList
+                                                || isInfixOf "挂失" line
+                                                || isInfixOf "补记流水" line) ) lineList
 
 -- 去除空行
 filterNull :: [String] -> [String]
