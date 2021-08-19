@@ -28,12 +28,16 @@ main = do
   outh <- openFile ((getDir . head' $ args) ++ "result.bean") WriteMode
   hSetEncoding outh utf8
 
-  let modified = convert . groupByEventTime . mfilter . lines $ text
-    in hPutStrLn outh (unlines modified)
+  let modified = convert . groupByDay . mfilter . lines $ text
+    in hPutStrLn outh (unlines . unlines' $ modified)
 
   hClose file
   hClose outh
 
+
+unlines' :: [[String]] -> [String]
+unlines' [] = []
+unlines' (x:xs) = x ++ unlines' xs
 
 -- 去除不需要的行
 mfilter :: [String] -> [String]
@@ -78,13 +82,23 @@ filterNull lineList = filter (\line -> length line > 0) lineList
 filterEvent :: [String] -> [String]
 filterEvent lineList = filter (\line -> isInfixOf "/" (getDate line)) lineList
 
+-- 将文本按日期划分
+groupByDay :: [String] -> [[String]]
+groupByDay = groupBy (\fst' snd' -> let fstDay = getDate fst'
+                                        sndDay = getDate snd'
+                                    in fstDay == sndDay)
+
 
 -- 短时间内的交易视为同一个交易
 -- 浴池：1h内都是一次洗澡
 -- 吃饭：1h 内的打卡都是一次吃饭
-convert :: [[String]] -> [String]
+convert :: [[String]] -> [[String]]
 convert [] = []
-convert (lineByEventList:linesList) = (combine lineByEventList):(convert linesList)
+convert (lineByDayList:linesList) = (convert' (groupByEventTime lineByDayList 1)):(convert linesList)
+
+convert' :: [[String]] -> [String]
+convert' [] = []
+convert' (events:eventsList) = [combine events] ++ convert' eventsList
 
 -- events 是同一天内相同的事件
 -- 将这些 events 转换成 beancount 格式
@@ -177,17 +191,14 @@ getEvent line = splitEvent line ' ' !! 2
 getCost :: String -> String
 getCost line = tail (splitEvent line ' ' !! 4)
 
-groupByEventTime :: [String] -> [[String]]
-groupByEventTime lineList = groupByEventTime' lineList 1
-
 -- limitTime 以小时算
 -- 根据商户名称和交易时间分类
 -- 商户名称判等规则：
 --   1. 两笔交易商户名称第一个 / 前面是一样的
 --   2. 两笔交易商户名称位对位字符比较相同达到一定标准
 -- 交易时间判等规则：一小时之内
-groupByEventTime' :: [String] -> Int -> [[String]]
-groupByEventTime' lineList limitTime = groupBy (\fst' snd' ->
+groupByEventTime :: [String] -> Int -> [[String]]
+groupByEventTime lineList limitTime = groupBy (\fst' snd' ->
                                                  let fstEvent = getEvent fst'
                                                      sndEvent = getEvent snd'
                                                      fstMain = takeWhile (/='/') fstEvent
