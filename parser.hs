@@ -107,17 +107,13 @@ remove_dups xs = remove $ sort xs
       | x1 == x2  = remove (x1:xs)
       | otherwise = x1 : remove (x2:xs)
 
-flatten :: [String] -> String
-flatten [] = []
-flatten (event:events) = "\"" ++ event ++ "\" " ++ flatten events
-
 getEventsName :: [String] -> String
 getEventsName lineList
   | (isInfixOf "浴池" (head' lineList))
     || (isInfixOf "银行转账" (head' lineList)) = formattedEventsName
   | otherwise = "\"" ++ (guessEventType . head' $ lineList) ++ "\" " ++ formattedEventsName
   where eventsName = (map (takeWhile (/='/')) (map getEvent lineList))
-        formattedEventsName = flatten . remove_dups $ eventsName
+        formattedEventsName = "\"" ++ intercalate " ￭ " (remove_dups eventsName) ++ "\""
 
 -- events 是同一天内相同的事件
 getDetail :: [String] -> String
