@@ -112,7 +112,8 @@ flatten (event:events) = "\"" ++ event ++ "\" " ++ flatten events
 
 getEventsName :: [String] -> String
 getEventsName lineList
-  | isInfixOf "浴池" (head' lineList) = flatten . remove_dups $ (map getEvent lineList)
+  | (isInfixOf "浴池" (head' lineList))
+    || (isInfixOf "银行转账" (head' lineList)) = flatten . remove_dups $ (map getEvent lineList)
   | otherwise = flatten $ (map getEvent lineList)
 
 -- events 是同一天内相同的事件
