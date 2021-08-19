@@ -90,7 +90,7 @@ convert (lineByEventList:linesList) = (combine lineByEventList):(convert linesLi
 -- 将这些 events 转换成 beancount 格式
 combine :: [String] -> String
 combine [] = ""
-combine events = printf "%s * %s\n  datetime: %s %s%s" date (getEventsName events) date time (getDetail events)
+combine events = printf "%s * %s\n  datetime: \"%s %s\"%s" date (getEventsName events) date time (getDetail events)
   where timeList = splitEvent (getDate . head' $ events) '/'
         complete numberString
           | length numberString < 2 = "0" ++ numberString
