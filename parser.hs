@@ -148,6 +148,7 @@ getDetailEvents (event:events) = getExpensesType event ++ cost ++ " CNY" ++ getD
           | otherwise = "\n  Expenses:Misc +"
           where hour = read (getTimeList event !! 0) :: Int
                 isFood = (isInfixOf "食堂" event) || (isInfixOf "餐厅" event)
+                         || (isInfixOf "新楼" event && isInfixOf "二楼" event)
 
 
 splitEvent :: String -> Char -> [String]
