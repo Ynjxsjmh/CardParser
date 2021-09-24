@@ -4,7 +4,7 @@ import pandas as pd
 
 
 file_path = sys.argv[1]
-df = pd.read_csv(file_path, sep='\t', names=['交易时间', '商户名称', '交易名称', '交易金额', '卡余额'])
+df = pd.read_csv(file_path, sep='\t', names=['交易时间', '商户名称', '交易名称', '交易金额', '卡余额'], skiprows=1)
 
 df['交易时间'] = pd.to_datetime(df['交易时间'])
 df['商户名称'] = df['商户名称'].str.strip()
