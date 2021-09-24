@@ -13,6 +13,6 @@ df['交易名称'] = df['交易名称'].str.strip()
 def get_balance(group):
     date = group['交易时间'].iloc[0].to_pydatetime().date() + datetime.timedelta(days=1)
     left = group['卡余额'].iloc[0]
-    return f'{date} balance Assets:CampusCard:Master {left} CNY'
+    return f'{date} balance Assets:CampusCard:Master {left:.2f} CNY'
 
 print(df.groupby(df['交易时间'].dt.strftime('%Y%m')).apply(get_balance).to_list())
