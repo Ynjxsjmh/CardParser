@@ -1,3 +1,18 @@
+"""结余断言生成脚本
+
+这个脚本用来生成校园卡的 beancount 余额断言，用于进行 balance。
+
+通过更改 `strftime('%Y%m%d')` 或 `strftime('%Y%m')` 可以分别达到
+按天按月 balance 的效果。按天可以用于找出具体是那一天 unbalance。
+
+在命令行下输入如下命令即可，其中 school_transaction.txt 是 tab 分隔
+的校园卡流水。
+
+```bash
+python balance.py school_transaction.txt
+```
+"""
+
 import sys
 import datetime
 import pandas as pd
