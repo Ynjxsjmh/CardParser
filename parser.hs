@@ -153,8 +153,9 @@ getDetail events
 
 getDetailEvents :: [String] -> String
 getDetailEvents [] = ""
-getDetailEvents (event:events) = getExpensesDetail event ++ cost ++ " CNY  ;; " ++ getEvent event ++ getDetailEvents events
+getDetailEvents (event:events) = getExpensesDetail event ++ cost ++ " CNY" ++ comment ++ getDetailEvents events
   where cost = printf "%.2f" (read . getCost $ event :: Float) :: String
+        comment = printf "  ;; time=%s&item=%s" (getTime event) (getEvent event)
         getExpensesDetail event
           | eventType == "Breakfast" = "\n  Expenses:Food:Breakfast +"
           | eventType == "Lunch"     = "\n  Expenses:Food:Lunch +"
