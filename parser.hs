@@ -126,8 +126,8 @@ remove_dups xs = remove $ sort xs
 getEventsName :: [String] -> String
 getEventsName lineList
   | (isInfixOf "浴池" (head' lineList))
-    || (isInfixOf "银行转账" (head' lineList)) = formattedEventsName
-  | otherwise = "\"" ++ (guessEventType . head' $ lineList) ++ "\" " ++ formattedEventsName
+    || (isInfixOf "银行转账" (head' lineList)) = formattedEventsName ++ " \"\""
+  | otherwise = formattedEventsName ++ " \"" ++ (guessEventType . head' $ lineList) ++ "\""
   where eventsName = (map (takeWhile (/='/')) (map getEvent lineList))
         formattedEventsName = "\"" ++ intercalate " ￭ " (remove_dups eventsName) ++ "\""
 
