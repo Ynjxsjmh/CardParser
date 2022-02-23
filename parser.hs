@@ -135,14 +135,14 @@ getEventsName lineList
 getDetail :: [String] -> String
 getDetail [] = ""
 getDetail events
-  | isInfixOf "浴池" event = "\n  Expenses:Health:Bath +" ++ costSum ++ " CNY\n" ++
-                             "  Assets:CampusCard:JLU -" ++ costSum ++ " CNY\n\n"
-  | isInfixOf "网络使用费" event = "\n  Expenses:Service:Internet +" ++ costSum ++ " CNY\n" ++
-                                 "  Assets:CampusCard:JLU -" ++ costSum ++ " CNY\n\n"
-  | isInfixOf "银行转账" event = "\n  Assets:Bank:CN:BOC -" ++ transferCostSum ++ " CNY\n" ++
-                                 "  Assets:CampusCard:JLU +" ++ transferCostSum ++ " CNY\n\n"
+  | isInfixOf "浴池" event = printf "\n  Expenses:Health:Bath +%s CNY\n" costSum ++
+                             printf "  Assets:CampusCard:JLU -%s CNY\n\n" costSum
+  | isInfixOf "网络使用费" event = printf "\n  Expenses:Service:Internet +%s CNY\n" costSum ++
+                                   printf "  Assets:CampusCard:JLU -%s CNY\n\n" costSum
+  | isInfixOf "银行转账" event = printf "\n  Assets:Bank:CN:BOC -%s CNY\n" transferCostSum ++
+                                 printf "  Assets:CampusCard:JLU +%s CNY\n\n" transferCostSum
   | otherwise  = getDetailEvents events ++
-                 "\n  Assets:CampusCard:JLU -" ++ costSum ++ " CNY\n\n"
+                 printf "\n  Assets:CampusCard:JLU -%s CNY\n\n" costSum
   where event = head' events
         getSumCost :: [String] -> Float
         getSumCost [] = 0
